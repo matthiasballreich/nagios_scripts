@@ -1,7 +1,8 @@
 #
 # Script name:	check_veeam_endpoint_eventlogs.ps1
-# Version: 		1.0
+# Version: 		2.0
 # Created on: 	1May2016
+# Modified on:  25May2020
 # Author: 		Dallas Haselhorst
 # Purpose: 		Check Veeam Endpoint Backup success or failure via event logs
 #
@@ -31,9 +32,9 @@
 
 
 # Pull in arguments
-$ArgLogName = "Veeam Endpoint Backup" # veeam backup event log
-$ArgEntryType = 1,2,3,4 # look for critical, error, warning and informational logs
-$ArgProviderName = "Veeam Endpoint Backup"
+$ArgLogName = "Veeam Agent" # veeam backup event log
+$ArgEntryType = 1,2,3,4 # look for critical, error, warning and informational logs /TODO: check if error level actual
+$ArgProviderName = "Veeam Agent"
 $ArgEventID = 190 # backup job complete event id
 
 $ArgLastHours = $args[0]
@@ -70,7 +71,7 @@ $LogEntries = Get-WinEvent -MaxEvents $ArgMaxEntries -FilterHashtable $Filter -e
 if ($LogEntries) {
 
     ForEach ($LogEntry in $LogEntries) {
-		if ($LogEntry.Message.ToString() -like "*EndpointBackup job `'Backup Job*")
+		if ($LogEntry.Message.ToString() -like "*Veeam Agent `'NAME_OF_YOUR_BACKUP_JOB_IN_VEEAM*")
 		{
         $Level=$LogEntry.Level.ToString()
 		if (($Level -eq 1) -Or ($Level -eq 2)) # find critical and errors
